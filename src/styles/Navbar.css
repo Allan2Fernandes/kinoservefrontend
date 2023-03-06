@@ -1,0 +1,27 @@
+#Navbar nav ul li{
+    list-style: none;
+    text-align: left; /* aligns the list item text to the left */
+    padding-left: 100px;
+    padding-right: 100px;
+    margin-top: 20px;
+    margin-bottom: 20px;
+}
+
+#Navbar nav ul li a{
+   text-decoration: none;
+    color: black;
+}
+
+
+#Navbar{
+    text-align: center;
+    background-color: antiquewhite;
+}
+
+#Navbar nav ul{
+    display: flex; /* makes the <ul> a block element that is centered */
+    text-align: left; /* resets the text alignment for the list items */
+    justify-content: center;
+}
+
+

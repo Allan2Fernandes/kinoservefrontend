@@ -1,0 +1,38 @@
+@import url('https://fonts.googleapis.com/css2?family=Overpass:wght@500&display=swap');
+*{
+    font-family: 'Overpass', sans-serif;
+}
+
+#MovieDiv{
+    /*font-family: 'Noto Serif', serif;*/
+}
+
+#CenterDiv {
+    padding-left: 50px;
+
+}
+
+#ScreeningsDiv{
+    display: flex;
+}
+
+#ScreeningsDiv div{
+    display: inline-block;
+    align-self: flex-end;
+    margin-left: 20px;
+}
+
+#ScreeningsDiv div a{
+    margin-right: 20px;
+    margin-bottom: 20px;
+    font-size: 20px;
+    padding: 10px;
+    border-radius: 10px;
+    background-color: red;
+}
+
+#ScreeningsDiv div a:hover{
+    opacity: 80%;
+    border-width: 5px;
+    margin: 7px;
+}
