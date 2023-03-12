@@ -1,9 +1,18 @@
 import React, {useEffect, useState} from "react";
-import { useLocation } from "react-router-dom";
+import {json, useLocation} from "react-router-dom";
 import Seat from "../Seat.jsx";
 
 function Reservation(){
+
     let iD = null;
+    const location = useLocation();
+    const searchParams = new URLSearchParams(location.search);
+    const data = searchParams.get("data");
+    let seatsList = []
+    let alreadyReservedSeats = []
+
+    iD = data
+
     let canvasStyle = {
         position: "absolute",
         top:"0",
@@ -14,36 +23,42 @@ function Reservation(){
         backgroundColor:"#ebf2ed",
     }
 
-    const location = useLocation();
-    const searchParams = new URLSearchParams(location.search);
-    const data = searchParams.get("data");
-    iD = data
-
-
     //Declare dimensions
     let seatSize = 40
 
-    let numColumns = 10
+    let numColumns = 20
     let canvasDimensionWidth = seatSize*numColumns
-    let numRows = 15
+    let numRows = 20
     let canvasDimensionHeight = seatSize*numRows
 
+    function CreateSeats(){
+        (async ()=>{
+            let canvas = document.getElementById("cinemaCanvas");
+            let context = canvas.getContext("2d");
+            context.clearRect(0,0, canvas.width, canvas.height)
+
+            seatsList = new Array(numColumns)
+
+            //Get previously reserved seats
+            alreadyReservedSeats = await getPreviouslyReservedSeats()
+            //Initialize rows
+            for (let i = 0; i < numColumns; i++) {
+                seatsList[i] = new Array(numRows)
+                for (let j = 0; j < numRows; j++) {
+                    let hasBeenReserved = false
+                    if(alreadyReservedSeats.find(object => object.row===j && object.column ===i)){
+                        hasBeenReserved = true
+                    }
+                    // Get the previously reserved status here and then set the boolean value in the constructor
+                    seatsList[i][j] = new Seat(hasBeenReserved, context, seatSize, i, j)
+                }
+            }
+            drawAllSeats()
+        })();
+    }
 
     function drawAllSeats(){
-        let canvas = document.getElementById("cinemaCanvas");
-        let context = canvas.getContext("2d");
-
-
-        let seatsList = new Array(numColumns)
-        //Initialize rows
-        for (let i = 0; i < numColumns; i++) {
-            seatsList[i] = new Array(numRows)
-            for (let j = 0; j < numRows; j++) {
-                seatsList[i][j] = new Seat(false, context, seatSize, i, j)
-            }
-
-        }
-
+        drawBorder()
         for (let i = 0; i < numColumns; i++) {
             for (let j = 0; j < numRows; j++) {
                 seatsList[i][j].drawSeat()
@@ -59,19 +74,104 @@ function Reservation(){
         context.strokeStyle = "red";
         context.rect(0, 0, canvasDimensionWidth, canvasDimensionHeight);
         context.stroke();
-        console.log("drawing seat");
     }
 
+    async function getPreviouslyReservedSeats(){
+        let seats = []
+        await fetch("http://51.75.69.121/api/Reservation/GetSeatsByScreeningID?sID=" + iD).then((response)=> response.json())
+            .then((response)=>{
+                for (let i = 0; i < response.length; i++) {
+                    seats.push(response[i])
+                }
+
+            })
+        return seats
+    }
+
+
     useEffect(()=>{
-        drawBorder();
-        drawAllSeats();
+        (async ()=>{
+            await fetch("http://51.75.69.121/api/Reservation/GetTheaterByScreeningID?sID=" + iD).then((response)=> response.json())
+                .then((response)=>{
+                    numRows =  response['rows']
+                    numColumns = response['columns']
+                    canvasDimensionWidth = seatSize*numColumns
+                    canvasDimensionHeight = seatSize*numRows
+                    let canvas = document.getElementById("cinemaCanvas");
+                    canvas.width = canvasDimensionWidth
+                    canvas.height = canvasDimensionHeight
+                })
+
+            //drawBorder();
+            CreateSeats();
+        })();
     }, [])
+
+    function SeatSelectionEventHandler(event){
+        let xPos = event.clientX - event.target.offsetLeft
+        let yPos = event.clientY - event.target.offsetTop
+        let xCoord = Math.floor(xPos/seatSize)
+        let yCoord = Math.floor(yPos/seatSize)
+        if(alreadyReservedSeats.find(object => object.row===yCoord && object.column ===xCoord)){
+            console.log("Already reserved")
+            return
+        }
+        seatsList[xCoord][yCoord].newlyReserved = !seatsList[xCoord][yCoord].newlyReserved
+        drawAllSeats()
+    }
+
+    function getAllSeatReservation(){
+        let newlyReservedSeats = []
+        for (let i = 0; i < numColumns; i++) {
+            for (let j = 0; j < numRows; j++) {
+                if(seatsList[i][j].newlyReserved){
+                    let reservation = {
+                        "row": j,
+                        "column": i
+                    }
+                    newlyReservedSeats.push(reservation);
+                }
+            }
+        }
+        return newlyReservedSeats
+    }
+
+    
+
+    function confirmReservation(){
+        (async () =>{
+            //Get list of newly reserved seats
+            let reservedSeats = getAllSeatReservation()
+            console.log("Number of newly reserved seats = " + reservedSeats.length)
+            let reservationDetails = {
+                "screeningID": iD,
+                "customerID": 3,
+                "seats": reservedSeats
+            }
+            const requestOptions = {
+                method: 'POST',
+                mode: 'cors',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json'
+                },
+                body: JSON.stringify(reservationDetails)
+            };
+            fetch('http://51.75.69.121/api/Reservation/MakeReservation', requestOptions)
+                .then((response) => response.json())
+                .then((data) => {
+                    console.log(data);
+                    CreateSeats();
+                });
+
+        })();
+    }
 
     return (
         <div>
-            <canvas style={canvasStyle} id={"cinemaCanvas"} width={canvasDimensionWidth} height={canvasDimensionHeight}>
-
+            <canvas onMouseUp={SeatSelectionEventHandler} style={canvasStyle} id={"cinemaCanvas"} width={canvasDimensionWidth} height={canvasDimensionHeight}>
             </canvas>
+            <button onClick={confirmReservation}>Post Test</button>
         </div>
     )
 }
