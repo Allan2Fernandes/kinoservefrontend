@@ -136,7 +136,7 @@ function Reservation(){
         return newlyReservedSeats
     }
 
-    
+
 
     function confirmReservation(){
         (async () =>{
@@ -163,7 +163,6 @@ function Reservation(){
                     console.log(data);
                     CreateSeats();
                 });
-
         })();
     }
 
