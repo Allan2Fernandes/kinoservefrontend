@@ -3,13 +3,14 @@ import {json, useLocation} from "react-router-dom";
 import Seat from "../Seat.jsx";
 
 function Reservation(){
-
+    const [inputtedEmailText, setInputtedEmailText] = useState('');
     let iD = null;
     const location = useLocation();
     const searchParams = new URLSearchParams(location.search);
     const data = searchParams.get("data");
     let seatsList = []
     let alreadyReservedSeats = []
+    const validEmail = new RegExp('^[a-zA-Z0-9._:$!%-]+@[a-zA-Z0-9.-]+.[a-zA-Z]$');
 
     iD = data
 
@@ -145,7 +146,7 @@ function Reservation(){
             console.log("Number of newly reserved seats = " + reservedSeats.length)
             let reservationDetails = {
                 "screeningID": iD,
-                "customerID": 3,
+                "customerID": inputtedEmailText,
                 "seats": reservedSeats
             }
             const requestOptions = {
@@ -166,11 +167,29 @@ function Reservation(){
         })();
     }
 
+    function onEmailInputFieldChange(event){
+        let inputtedEmail = event.target.value
+        setInputtedEmailText(inputtedEmail)
+        if(validEmail.test(inputtedEmail)){
+            console.log("Valid email")
+        }else{
+            console.log("Invalid email")
+        }
+    }
+
     return (
         <div>
             <canvas onMouseUp={SeatSelectionEventHandler} style={canvasStyle} id={"cinemaCanvas"} width={canvasDimensionWidth} height={canvasDimensionHeight}>
             </canvas>
-            <button onClick={confirmReservation}>Post Test</button>
+            <div>
+                <label>Enter Email </label>
+                <input
+                type={"email"}
+                id={"inputId"}
+                onChange={onEmailInputFieldChange}
+                />
+            </div>
+            <button onClick={confirmReservation}>Confirm reservations</button>
         </div>
     )
 }
