@@ -4,6 +4,8 @@ import Seat from "../Seat.jsx";
 
 function Reservation(){
     const [inputtedEmailText, setInputtedEmailText] = useState('');
+    const [isValidEmail, setIsValidEmail] = useState(false);
+    const [screeningPrice, setScreeningPrice] = useState(0);
     let iD = null;
     const location = useLocation();
     const searchParams = new URLSearchParams(location.search);
@@ -22,6 +24,11 @@ function Reservation(){
         right: "0",
         margin:"auto",
         backgroundColor:"#ebf2ed",
+    }
+    let imageStyle = {
+        position: "absolute",
+        left: "30%",
+        top: "20%"
     }
 
     //Declare dimensions
@@ -84,7 +91,6 @@ function Reservation(){
                 for (let i = 0; i < response.length; i++) {
                     seats.push(response[i])
                 }
-
             })
         return seats
     }
@@ -101,6 +107,11 @@ function Reservation(){
                     let canvas = document.getElementById("cinemaCanvas");
                     canvas.width = canvasDimensionWidth
                     canvas.height = canvasDimensionHeight
+                })
+
+            await fetch("http://51.75.69.121/api/Movies/GetScreeningsByID?id="+iD).then((response)=>response.json())
+                .then((response)=>{
+                    setScreeningPrice(response[0]['screening']['price'])
                 })
 
             //drawBorder();
@@ -141,12 +152,16 @@ function Reservation(){
 
     function confirmReservation(){
         (async () =>{
+            if(!isValidEmail){
+                console.log("Invalid Email entered");
+                return;
+            }
             //Get list of newly reserved seats
             let reservedSeats = getAllSeatReservation()
             console.log("Number of newly reserved seats = " + reservedSeats.length)
             let reservationDetails = {
                 "screeningID": iD,
-                "customerID": inputtedEmailText,
+                "CustomerEmail": inputtedEmailText,
                 "seats": reservedSeats
             }
             const requestOptions = {
@@ -170,15 +185,12 @@ function Reservation(){
     function onEmailInputFieldChange(event){
         let inputtedEmail = event.target.value
         setInputtedEmailText(inputtedEmail)
-        if(validEmail.test(inputtedEmail)){
-            console.log("Valid email")
-        }else{
-            console.log("Invalid email")
-        }
+        setIsValidEmail(validEmail.test(inputtedEmail))
     }
 
     return (
         <div>
+            <img src={"Top view monitor.jpg"} style={imageStyle} height={100}/>
             <canvas onMouseUp={SeatSelectionEventHandler} style={canvasStyle} id={"cinemaCanvas"} width={canvasDimensionWidth} height={canvasDimensionHeight}>
             </canvas>
             <div>
@@ -189,7 +201,11 @@ function Reservation(){
                 onChange={onEmailInputFieldChange}
                 />
             </div>
+            <br/>
             <button onClick={confirmReservation}>Confirm reservations</button>
+            <br/>
+            <br/>
+            <label>{"Price of the movie = " + screeningPrice}</label>
         </div>
     )
 }
