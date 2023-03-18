@@ -1,5 +1,6 @@
 import React, {useEffect, useState} from "react";
-import Reservation from "./Reservation.jsx";
+import {Link} from "react-router-dom";
+
 
 function MovieDiv(props){
     const [screenings, setScreenings] = useState([])
@@ -29,7 +30,7 @@ function MovieDiv(props){
             <div id={"ScreeningsDiv"}>
                 <img src={props.imageLink} height={"300"} alt={"NON REDUNDANT SHIT"}/>
                 <div>{screenings.map((everyScreening)=>(
-                    <a href={`/Reservation?data=${everyScreening.id}`} id={everyScreening.id}>{everyScreening.screeningTime}</a>
+                    <Link to={`/Reservation/${everyScreening.id}`} id={everyScreening.id}>{everyScreening.screeningTime}</Link>
                 ))}</div>
             </div>
         </div>

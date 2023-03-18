@@ -4,6 +4,7 @@ import "../styles/Navbar.css"
 import "../styles/Homediv.css"
 import Home from "./Home.jsx";
 import Movies from "./Movies.jsx";
+import ReservationFunction from "./ReservationFunction.jsx";
 import Reservation from "./Reservation.jsx";
 
 function Navbar(){
@@ -42,7 +43,7 @@ function Navbar(){
                 <Route path="/about" element={<About />} />
                 <Route path="/contact" element={<Contact />} />
                 <Route path = "/Movies" element={<Movies/>}/>
-                <Route path ="/Reservation" element = {<Reservation/>}/>
+                <Route path ="/Reservation/:id" element={<Reservation/>}/>
             </Routes>
         </Router>
     )
