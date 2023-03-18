@@ -270,7 +270,7 @@ class Reservation extends React.Component{
             <div>
                 <canvas ref={this.canvasRef} style={this.canvasStyle} width={this.canvasDimensionWidth} height={this.canvasDimensionHeight} onMouseUp={this.SeatSelectionEventHandler}>
                 </canvas>
-                <div>
+                <div id={"inputFieldsDiv"}>
                     <label>Enter Email: </label>
                     <br/>
                     <input
@@ -313,9 +313,9 @@ class Reservation extends React.Component{
                         <br/>
                         <button onClick={this.postDetailsClickHandler}>Update user</button>
                     </div>
-
+                    <button onClick={this.confirmReservation}>Confirm reservations</button>
                 </div>
-                <button onClick={this.confirmReservation}>Confirm reservations</button>
+
 
             </div>
         );
