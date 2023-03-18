@@ -1,5 +1,6 @@
 import Seat from "../Seat.jsx";
 import React from "react";
+import "../styles/Reservation.css"
 
 class Reservation extends React.Component{
     canvasStyle = {
@@ -34,6 +35,7 @@ class Reservation extends React.Component{
         this.inputtedEmail = "";
         this.validEmailEntered = false;
         this.userJSONDetails = null;
+        this.shouldUpdateInputFields = false;
 
     }
 
@@ -169,15 +171,23 @@ class Reservation extends React.Component{
     }
 
     getUserDetailsOnEmail = async ()=>{
-        await fetch("http://51.75.69.121/api/Customer/GetCustomer?email=" + this.inputtedEmail)
-            .then((response) => {
-                if(response.status === 200){
-                    return response.json();
-                }
-            })
-            .then((data) =>{
-                this.userJSONDetails = data;
-            })
+        try{
+            await fetch("http://51.75.69.121/api/Customer/GetCustomer?email=" + this.inputtedEmail)
+                .then((response) => {
+                    if(response.status === 200){
+                        this.shouldUpdateInputFields = true;
+                        return response.json();
+                    }else{
+                        this.shouldUpdateInputFields = false;
+                    }
+                })
+                .then((data) =>{
+                    this.userJSONDetails = data;
+                    console.log(this.userJSONDetails)
+                })
+        }catch (error){
+            console.log(error)
+        }
 
     }
 
@@ -187,7 +197,9 @@ class Reservation extends React.Component{
             this.validEmailEntered = true;
             //If a valid email has been entered, do a GET for user details
             await this.getUserDetailsOnEmail();
-            await this.updateInputFields();
+            if(this.shouldUpdateInputFields){
+                await this.updateInputFields();
+            }
 
         }else{
             console.log("Invalid email")
@@ -248,7 +260,8 @@ class Reservation extends React.Component{
         console.log(JSON.stringify(updatedUserDetails))
         fetch('http://51.75.69.121/api/Customer/PostCustomer', requestOptions)
             .then((response) => {
-                console.log(response)
+                if(response.status === 200){
+                }
             })
     }
 
@@ -258,40 +271,49 @@ class Reservation extends React.Component{
                 <canvas ref={this.canvasRef} style={this.canvasStyle} width={this.canvasDimensionWidth} height={this.canvasDimensionHeight} onMouseUp={this.SeatSelectionEventHandler}>
                 </canvas>
                 <div>
-                    <label>Enter Email </label>
+                    <label>Enter Email: </label>
+                    <br/>
                     <input
                         type={"email"}
                         id={"inputId"}
                         onChange={this.onEmailInputFieldChange}
                     />
                     <div>
-                        <br/>
                         <label>First name: </label>
+                        <br/>
                         <input type={"text"} id={"firstNameInput"}/>
                         <br/>
                         <label>Last name: </label>
+                        <br/>
                         <input type={"text"} id={"lastNameInput"}/>
                         <br/>
                         <label>Phone Number: </label>
+                        <br/>
                         <input type={"text"} id={"phoneNumberInput"}/>
                         <br/>
                         <label>Address street: </label>
+                        <br/>
                         <input type={"text"} id={"addressStreetInput"}/>
                         <br/>
                         <label>Address city: </label>
+                        <br/>
                         <input type={"text"} id={"addressCityInput"}/>
                         <br/>
                         <label>City zip code: </label>
+                        <br/>
                         <input type={"number"} id={"zipCodeInput"}/>
                         <br/>
                         <label>Country: </label>
+                        <br/>
                         <input type={"text"} id={"countryInput"}/>
                         <br/>
                         <label>Password: </label>
+                        <br/>
                         <input type={"password"} id={"passwordInput"}/>
                         <br/>
                         <button onClick={this.postDetailsClickHandler}>Update user</button>
                     </div>
+
                 </div>
                 <button onClick={this.confirmReservation}>Confirm reservations</button>
 
