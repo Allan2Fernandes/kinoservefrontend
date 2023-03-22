@@ -2,7 +2,7 @@ import React from "react";
 import {Link, Route,BrowserRouter as Router, Routes} from "react-router-dom";
 import "../styles/Navbar.css"
 import "../styles/Homediv.css"
-import Home from "./Home.jsx";
+import Home from "../pages/Home.jsx";
 import Movies from "./Movies.jsx";
 import Reservation from "./Reservation.jsx";
 import Payment from "./Payment.jsx";
