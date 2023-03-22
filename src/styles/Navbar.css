@@ -3,25 +3,30 @@
     text-align: left; /* aligns the list item text to the left */
     padding-left: 100px;
     padding-right: 100px;
-    margin-top: 20px;
+    margin-top: 30px;
     margin-bottom: 20px;
 }
 
 #Navbar nav ul li a{
    text-decoration: none;
+   font-size: 20px;
     color: black;
 }
 
 
 #Navbar{
-    text-align: center;
-    background-color: antiquewhite;
+    margin-left: -8px;
+    margin-right: -8px;
+    background-color: #9c92ac;
+    border-radius: 5px;
 }
 
 #Navbar nav ul{
     display: flex; /* makes the <ul> a block element that is centered */
     text-align: left; /* resets the text alignment for the list items */
     justify-content: center;
+    margin-top: -16px;
+    
 }
 
 
