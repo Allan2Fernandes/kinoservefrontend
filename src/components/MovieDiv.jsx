@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from "react";
 import {Link} from "react-router-dom";
-
+import { Fade } from "react-awesome-reveal";
 
 function MovieDiv(props){
     const [screenings, setScreenings] = useState([])
@@ -25,6 +25,7 @@ function MovieDiv(props){
 
     return (
         <div id={"CenterDiv"}>
+            <Fade cascade triggerOnce>
             <h3>{props.name}</h3>
             <p>{props.description}</p>
             <div id={"ScreeningsDiv"}>
@@ -33,6 +34,7 @@ function MovieDiv(props){
                     <Link to={`/Reservation/${everyScreening.id}`} id={everyScreening.id}>{everyScreening.screeningTime}</Link>
                 ))}</div>
             </div>
+            </Fade>
         </div>
     )
 }
