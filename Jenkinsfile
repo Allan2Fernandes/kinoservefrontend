@@ -17,13 +17,24 @@ pipeline {
 
                     // Build the project
                     sh 'npm run build'
+
+
                  }
             }
         }
 
         stage('Test') {
             steps {
-                echo "tEST6"
+                //Run the project
+                sh 'tmux'
+                sh 'npm run dev'
+                sh 'tmux detach'
+
+                //Install testcafe
+                sh 'npm install -g testcafe'
+                sh 'cd tests'
+                //Run the tests
+                sh 'testcafe firefox:headless kinoservetests.js'
             }
         }
 
