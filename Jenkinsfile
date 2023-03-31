@@ -29,7 +29,7 @@ pipeline {
                 //Install testcafe
                 sh 'npm install -g testcafe'
                 //Run the tests
-                sh 'npx firefox:headless tests/kinoservetests.js'
+                sh 'testcafe firefox:headless tests/kinoservetests.js'
             }
         }
 
