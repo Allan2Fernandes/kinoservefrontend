@@ -17,8 +17,6 @@ pipeline {
 
                     // Build the project
                     sh 'npm run build'
-
-
                  }
             }
         }
@@ -26,9 +24,7 @@ pipeline {
         stage('Test') {
             steps {
                 //Run the project
-                sh 'tmux'
                 sh 'npm run dev'
-                sh 'tmux detach'
 
                 //Install testcafe
                 sh 'npm install -g testcafe'
