@@ -21,11 +21,15 @@ pipeline {
             }
         }
 
+        stage('Start server'){
+           steps{
+               //Run the project
+               sh 'npm run dev'
+           }
+        }
+
         stage('Test') {
             steps {
-                //Run the project
-                sh 'npm run dev'
-
                 //Install testcafe
                 sh 'npm install -g testcafe'
                 sh 'cd tests'
