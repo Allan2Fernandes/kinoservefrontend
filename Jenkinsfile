@@ -21,20 +21,24 @@ pipeline {
             }
         }
 
-        stage('Start server'){
-           steps{
-               //Run the project
-               sh 'npm run dev'
-           }
-        }
+        stage("Run tests"){
+            parallel{
+                stage('Start server'){
+                   steps{
+                       //Run the project
+                       sh 'npm run dev'
+                   }
+                }
 
-        stage('Test') {
-            steps {
-                //Install testcafe
-                sh 'npm install -g testcafe'
-                sh 'cd tests'
-                //Run the tests
-                sh 'testcafe firefox:headless kinoservetests.js'
+                stage('Test') {
+                    steps {
+                        //Install testcafe
+                        sh 'npm install -g testcafe'
+                        sh 'cd tests'
+                        //Run the tests
+                        sh 'testcafe firefox:headless kinoservetests.js'
+                    }
+                }
             }
         }
 
