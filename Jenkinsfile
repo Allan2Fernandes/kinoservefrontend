@@ -21,26 +21,6 @@ pipeline {
             }
         }
 
-        stage('npm Setup'){
-            steps{
-                sh "echo [Unit]
-                     Description=My app
-
-                     [Service]
-                     ExecStart=/var/www/myapp/app.js
-                     Restart=always
-                     User=nobody
-                     # Note Debian/Ubuntu uses 'nogroup', RHEL/Fedora uses 'nobody'
-                     Group=nogroup
-                     Environment=PATH=/usr/bin:/usr/local/bin
-                     Environment=NODE_ENV=production
-                     WorkingDirectory=/var/www/myapp
-
-                     [Install]
-                     WantedBy=multi-user.target"
-            }
-        }
-
 
         stage('Test') {
             steps {
