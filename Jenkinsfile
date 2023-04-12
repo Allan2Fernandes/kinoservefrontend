@@ -49,8 +49,12 @@ pipeline {
                 sh 'npm run dev'
                 //Install testcafe
                 sh 'npm install -g testcafe'
-                //Run the tests
+                //Run the end to end tests
                 sh 'testcafe firefox:headless tests/kinoservetests.js'
+
+                //Performance tests
+                sh 'sudo apt-get install k6'
+                sh 'k6 run tests/k6tests.js'
             }
         }
 
