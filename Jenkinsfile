@@ -1,6 +1,6 @@
 pipeline {
     agent any
-    triggers { pollSCM 'H/5 * * * *' }
+    triggers { pollSCM '59 23 * * 1-5'}
     stages {
         stage('Checkout') {
             steps {
@@ -34,7 +34,7 @@ pipeline {
 
                 //Performance tests
                 sh 'sudo apt-get install k6'
-                sh 'k6 run tests/k6tests.js'
+                sh 'k6 run k6tests.js'
             }
         }
 
